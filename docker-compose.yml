@@ -1,0 +1,28 @@
+# Everything you need locally: FalkorDB (+ its Browser on :3000) and Hivemind (dashboard, API, MCP on :8765).
+#   docker compose up -d   then open http://localhost:8765 and press "Play the demo".
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    ports:
+      - "6379:6379"
+      - "3000:3000"
+    volumes:
+      - falkordb_data:/var/lib/falkordb/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  hivemind:
+    build: .
+    ports:
+      - "8765:8765"
+    environment:
+      HIVEMIND_FALKORDB_URL: redis://falkordb:6379
+      HIVEMIND_API_KEY: ${HIVEMIND_API_KEY:-}
+    depends_on:
+      falkordb:
+        condition: service_healthy
+
+volumes:
+  falkordb_data:
