@@ -1,16 +1,16 @@
-# Render blueprint: the Hivemind server as a Docker web service.
-# FalkorDB runs on FalkorDB Cloud (free tier): set HIVEMIND_FALKORDB_URL to its
-# connection string, e.g. redis://default:PASSWORD@HOST:PORT
+# Render blueprint: one free web service running FalkorDB + Hivemind in one container.
+# Deploy: https://render.com/deploy?repo=https://github.com/Lecrupus/hivemind
+# Memory is in-process and resets on restart (the demo is re-seeded at start), which suits a demo.
+# For durable team memory, set dockerfilePath to ./Dockerfile and add HIVEMIND_FALKORDB_URL
+# pointing at FalkorDB Cloud (redis://default:PASSWORD@HOST:PORT).
 services:
   - type: web
     name: hivemind
     runtime: docker
     plan: free
+    dockerfilePath: ./deploy/standalone/Dockerfile
+    dockerContext: .
     healthCheckPath: /api/health
     envVars:
-      - key: HIVEMIND_FALKORDB_URL
-        sync: false
       - key: HIVEMIND_API_KEY
         generateValue: true
-      - key: HIVEMIND_PUBLIC
-        value: "1"

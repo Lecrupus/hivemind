@@ -6,7 +6,9 @@ Hivemind is a shared, time-aware memory and coordination layer for teams of AI a
 
 Built for **Graph Hacks** (WeMakeDevs × FalkorDB), **Track 2: Agent Memory and Coordination**.
 
-**[Live demo](https://lecrupus-hivemind.hf.space)** · **[Demo video (2 min)](https://github.com/Lecrupus/hivemind/releases/tag/v0.1.0)** · [Hugging Face Space](https://huggingface.co/spaces/Lecrupus/hivemind) · [Architecture and judge Q&A](ARCHITECTURE.md)
+**[Demo video (2 min)](https://github.com/Lecrupus/hivemind/releases/tag/v0.1.0)** · [Architecture and judge Q&A](ARCHITECTURE.md) · [Deploy your own, free](#deploy)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Lecrupus/hivemind)
 
 ![Map: agents, their work, what they learned and the topics it touches](docs/img/relationship-map.png)
 
@@ -52,7 +54,7 @@ It also says **"not in the graph"** instead of guessing when it doesn't know som
 
 ## See it in 60 seconds
 
-Open the **[live demo](https://lecrupus-hivemind.hf.space)**, or run it yourself:
+Run it yourself (or [deploy it free on Render](#deploy)):
 
 ```bash
 docker compose up -d
@@ -273,17 +275,19 @@ The tests cover:
 
 ## Deploy
 
-**One container, no accounts beyond the host** (`deploy/huggingface/Dockerfile`). FalkorDB and Hivemind run together, memory is in-process, and the demo workspace is seeded at start. This is what the [live demo](https://lecrupus-hivemind.hf.space) runs on a free Hugging Face Docker Space:
+**One click, free, no database account** ([`render.yaml`](render.yaml)). Press **Deploy to Render** above and sign in with GitHub. Render builds `deploy/standalone/Dockerfile`, a single container running FalkorDB and Hivemind together (about 310 MB of RAM, within the free tier's 512 MB), and generates `HIVEMIND_API_KEY`. The demo workspace is seeded at start. Free instances sleep after 15 idle minutes, and the first visit after that takes about a minute.
+
+The same container runs on any Docker host:
 
 ```bash
-docker build -f deploy/huggingface/Dockerfile -t hivemind-space .
-docker run -p 7860:7860 -e HIVEMIND_API_KEY=change-me hivemind-space
+docker build -f deploy/standalone/Dockerfile -t hivemind-standalone .
+docker run -p 7860:7860 -e HIVEMIND_API_KEY=change-me hivemind-standalone
 ```
 
 Memory resets when that container restarts, so it suits demos. For a team, keep FalkorDB separate and durable:
 
 - **Docker Compose:** `docker compose up -d` (FalkorDB with a data volume + the server).
-- **Render + FalkorDB Cloud:** `render.yaml` is a blueprint. Create a free FalkorDB Cloud instance, then in Render choose *New → Blueprint*, pick this repo, and set `HIVEMIND_FALKORDB_URL` to the instance's `redis://default:PASSWORD@HOST:PORT`. Render generates `HIVEMIND_API_KEY`.
+- **Render + FalkorDB Cloud:** in `render.yaml`, set `dockerfilePath: ./Dockerfile` and add `HIVEMIND_FALKORDB_URL` with your FalkorDB Cloud instance's `redis://default:PASSWORD@HOST:PORT`.
 
 To point agents at a deployed server, set `HIVEMIND_API_KEY` in your shell, then run `hivemind install claude-code --url https://YOUR-HOST`. The hooks and `.mcp.json` send the key as a bearer token.
 
@@ -315,7 +319,7 @@ src/hivemind/
   web/           the dashboard (vanilla JS, no build step)
 bench/           concurrency benchmark, Claude Code A/B
 tests/           integration tests against FalkorDB
-deploy/          self-contained container for Hugging Face Spaces (FalkorDB + server)
+deploy/          self-contained container (FalkorDB + server) used by render.yaml
 demo/sample-repo the payments repo used by the A/B benchmark
 ```
 
