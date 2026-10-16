@@ -1,0 +1,34 @@
+[project]
+name = "hivemind"
+version = "0.1.0"
+description = "Shared, time-aware graph memory and coordination for teams of AI agents, on FalkorDB"
+authors = [
+    { name = "lecrupus", email = "197352780+Lecrupus@users.noreply.github.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "falkordb>=1.8.0",
+    "fastapi>=0.143.2",
+    "fastembed>=0.9.0",
+    "mcp[cli]>=2.3.0",
+    "pydantic>=2.14.1",
+    "redis>=8.1.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.2,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "playwright>=1.64.0",
+    "pytest>=9.1.1",
+]
+
+[project.scripts]
+hivemind = "hivemind.cli:main"
+hivemind-hook = "hivemind.hook_client:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
