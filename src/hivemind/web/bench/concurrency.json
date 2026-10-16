@@ -1,0 +1,90 @@
+{
+  "generated_at": "2026-10-15 20:22 UTC",
+  "machine": "Windows 10, 24 CPUs, FalkorDB on Redis 8.10.2 (Docker)",
+  "description": "Mixed workload per agent: 70% recall (vector + full-text + graph expansion), 20% remember, 10% learn. Load generated from 12 processes. Each recall runs ~8 FalkorDB queries.",
+  "scenarios": [
+    {
+      "name": "10 agents \u00b7 1 shared graph",
+      "agents": 10,
+      "graphs": 1,
+      "processes": 10,
+      "ops": 300,
+      "errors": 0,
+      "seconds": 0.47,
+      "ops_per_s": 638.0819375351801,
+      "p50_ms": 16.72379999945406,
+      "p95_ms": 22.763654996379046,
+      "p99_ms": 28.049518993793754
+    },
+    {
+      "name": "10 agents \u00b7 10 tenant graphs",
+      "agents": 10,
+      "graphs": 10,
+      "processes": 10,
+      "ops": 300,
+      "errors": 0,
+      "seconds": 0.45,
+      "ops_per_s": 659.5858151626645,
+      "p50_ms": 16.328350000549108,
+      "p95_ms": 22.56587499359739,
+      "p99_ms": 25.315400998224504
+    },
+    {
+      "name": "50 agents \u00b7 1 shared graph",
+      "agents": 50,
+      "graphs": 1,
+      "processes": 12,
+      "ops": 1500,
+      "errors": 0,
+      "seconds": 1.72,
+      "ops_per_s": 871.3912287969565,
+      "p50_ms": 29.59714999451535,
+      "p95_ms": 135.86319499881938,
+      "p99_ms": 298.17071699304506
+    },
+    {
+      "name": "50 agents \u00b7 10 tenant graphs",
+      "agents": 50,
+      "graphs": 10,
+      "processes": 12,
+      "ops": 1500,
+      "errors": 0,
+      "seconds": 1.75,
+      "ops_per_s": 857.2731994752359,
+      "p50_ms": 57.25890000030631,
+      "p95_ms": 97.51114998871344,
+      "p99_ms": 130.46076999555225
+    },
+    {
+      "name": "100 agents \u00b7 1 shared graph",
+      "agents": 100,
+      "graphs": 1,
+      "processes": 12,
+      "ops": 3000,
+      "errors": 0,
+      "seconds": 2.72,
+      "ops_per_s": 1104.7567472460785,
+      "p50_ms": 22.30145000066841,
+      "p95_ms": 160.68997999755084,
+      "p99_ms": 689.0111169999
+    },
+    {
+      "name": "100 agents \u00b7 10 tenant graphs",
+      "agents": 100,
+      "graphs": 10,
+      "processes": 12,
+      "ops": 3000,
+      "errors": 0,
+      "seconds": 2.31,
+      "ops_per_s": 1301.1009336909533,
+      "p50_ms": 62.293299997691065,
+      "p95_ms": 145.99643999536056,
+      "p99_ms": 220.68521099659847
+    }
+  ],
+  "race": {
+    "agents": 100,
+    "trials": 20,
+    "exactly_one_winner": 20
+  }
+}

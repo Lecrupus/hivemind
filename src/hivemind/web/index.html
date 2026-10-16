@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hivemind</title>
+  <meta name="description" content="Shared, time-aware graph memory and coordination for teams of AI agents, on FalkorDB.">
+  <meta name="theme-color" content="#141414">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23d22f17'/><path d='M10 12 22 12 16 22Z' fill='none' stroke='white' stroke-opacity='.6' stroke-width='1.6'/><circle cx='10' cy='12' r='3.4' fill='white'/><circle cx='22' cy='12' r='3.4' fill='white'/><circle cx='16' cy='22' r='3.4' fill='white'/></svg>">
+  <script>
+    let t = "light"; try { t = localStorage.getItem("hm-theme-v2") || "light"; } catch {} document.documentElement.dataset.theme = t;
+  </script>
+</head>
+<body data-pane="map">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-play" viewBox="0 0 16 16"><path d="M4.5 2.8v10.4L13 8z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.2A8.5 8.5 0 1 1 10.8 3.5a6.6 6.6 0 0 0 9.7 9.7z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></symbol>
+    <symbol id="i-merge" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.3 7.2 15.7 10.8M8.3 16.8l7.4-3.6"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="1"/><path d="M14.5 4.5v15"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="5"/><rect x="16" y="4" width="5" height="5"/><rect x="16" y="15" width="5" height="5"/><path d="M8 6.5h4v11h4M12 6.5h4"/></symbol>
+    <symbol id="i-board" viewBox="0 0 24 24"><path d="M4 4.5v15M10 4.5v10M16 4.5v13M20 4.5v6"/></symbol>
+    <symbol id="i-graph" viewBox="0 0 24 24"><circle cx="6" cy="7" r="2.3"/><circle cx="17.5" cy="5.5" r="2.3"/><circle cx="12" cy="17.5" r="2.3"/><circle cx="19" cy="15" r="1.6"/><path d="M8.2 7.8 15.3 6M7.3 9l3.6 6.5M13.9 16.5l3.6-1M17.6 7.8l1.1 5.6"/></symbol>
+    <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16 14.6c2.3.1 3.9 1.6 4.5 4.4"/></symbol>
+    <symbol id="i-inspect" viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="1"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16.2 9.5"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10.5 21 19 10h-6z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19z"/><path d="M12 10v4.5M12 17.4v.1"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.1"/></symbol>
+    <symbol id="i-handoff" viewBox="0 0 24 24"><path d="M4 12h14M13 6.5 18.5 12 13 17.5"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to the workspace</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 8 L17 8 L12 17 Z"/><circle cx="7" cy="8" r="2.7"/><circle cx="17" cy="8" r="2.7"/><circle cx="12" cy="17" r="2.7"/></svg></span>
+      <span class="brand-name">Hivemind</span>
+    </div>
+    <label class="ws-field"><span>Workspace</span><select id="workspace" aria-label="Workspace"></select></label>
+    <div class="tabs views" role="tablist" aria-label="View">
+      <button role="tab" id="tab-map" data-view="map" aria-controls="view-map" aria-selected="true"><svg class="icon"><use href="#i-map"/></svg>Map</button>
+      <button role="tab" id="tab-board" data-view="board" aria-controls="view-board" aria-selected="false" tabindex="-1"><svg class="icon"><use href="#i-board"/></svg>Board</button>
+      <button role="tab" id="tab-graph" data-view="graph" aria-controls="view-graph" aria-selected="false" tabindex="-1"><svg class="icon"><use href="#i-graph"/></svg>Graph</button>
+      <span class="tab-ind" aria-hidden="true"></span>
+    </div>
+    <div class="top-actions">
+      <span id="live" class="status" role="status" title="Live updates from FalkorDB pub/sub"><span class="pulse"></span><span class="status-text">Connecting</span></span>
+      <button id="theme" class="icon-btn" type="button" aria-label="Switch to dark theme"><svg class="icon"><use href="#i-moon"/></svg></button>
+      <button id="insp-toggle" class="icon-btn" type="button" aria-label="Show inspector" aria-controls="inspector" aria-expanded="false"><svg class="icon"><use href="#i-panel"/></svg></button>
+      <button id="consolidate" class="btn" type="button" title="Run PageRank and community detection now" aria-label="Consolidate memory"><svg class="icon"><use href="#i-merge"/></svg><span class="btn-label">Consolidate</span></button>
+      <button id="play" class="btn primary" type="button" aria-label="Play the demo"><svg class="icon fill"><use href="#i-play"/></svg><span class="btn-label">Play the demo</span><span class="btn-label-short" aria-hidden="true">Play</span></button>
+    </div>
+  </header>
+
+  <section class="stats loading" id="metrics" aria-label="Memory metrics"></section>
+
+  <div id="narration" class="narration" role="status" aria-live="polite" hidden>
+    <span class="step-no" id="step-no">01</span>
+    <p class="narr-text" id="narr-text"></p>
+    <div class="narr-side">
+      <span class="ticks" id="ticks" aria-hidden="true"></span>
+      <details class="steps-pop" id="steps-pop">
+        <summary>All steps <span id="steps-count">1</span><svg class="icon"><use href="#i-chev"/></svg></summary>
+        <ol class="steps-list" id="steps-list"></ol>
+      </details>
+      <button class="icon-btn" id="narr-close" type="button" aria-label="Dismiss narration" hidden><svg class="icon"><use href="#i-x"/></svg></button>
+    </div>
+  </div>
+  <div id="offline" class="offline" role="alert" hidden><svg class="icon"><use href="#i-alert"/></svg><span id="offline-text">Can't reach the Hivemind server. Retrying automatically…</span></div>
+
+  <main class="layout" id="main">
+    <aside class="rail" aria-label="Agents and tasks">
+      <section class="rail-section">
+        <div class="head"><h2>Team</h2><span class="count" id="agent-count"></span></div>
+        <div id="agents" class="rows"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      </section>
+      <section class="rail-section">
+        <div class="head"><h2>Queue</h2><span class="count" id="task-count"></span></div>
+        <div id="queue" class="rows"><div class="skel"></div><div class="skel"></div></div>
+      </section>
+    </aside>
+
+    <section class="stage" aria-label="Workspace">
+      <div class="view" id="view-map" role="tabpanel" aria-labelledby="tab-map">
+        <div class="map-scroll" id="map-scroll">
+          <div class="map" id="map">
+            <svg class="map-links" id="map-links" aria-hidden="true"></svg>
+            <section class="map-col" aria-labelledby="col-h-agents"><div class="head"><h3 id="col-h-agents">Agents</h3><span class="count" id="n-agents"></span></div><div class="col-body" id="col-agents"><div class="skel"></div><div class="skel"></div></div></section>
+            <section class="map-col" aria-labelledby="col-h-work"><div class="head"><h3 id="col-h-work">Work</h3><span class="count" id="n-work"></span></div><div class="col-body" id="col-work"><div class="skel"></div></div></section>
+            <section class="map-col" aria-labelledby="col-h-knowledge"><div class="head"><h3 id="col-h-knowledge">Knowledge</h3><span class="count" id="n-knowledge"></span></div><div class="col-body" id="col-knowledge"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></section>
+            <section class="map-col" aria-labelledby="col-h-topics"><div class="head"><h3 id="col-h-topics">Topics</h3><span class="count" id="n-topics"></span></div><div class="col-body" id="col-topics"><div class="skel tall"></div></div></section>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-board" role="tabpanel" aria-labelledby="tab-board" hidden>
+        <div class="board" id="board"></div>
+      </div>
+
+      <div class="view" id="view-graph" role="tabpanel" aria-labelledby="tab-graph" hidden>
+        <div id="graph" class="graph"></div>
+        <div class="legend" id="legend" role="group" aria-label="Show node types"></div>
+      </div>
+
+      <div class="timebar live" id="timebar">
+        <span class="timebar-label" id="tt-label">Time travel</span>
+        <span class="asof start" id="tt-start"></span>
+        <div class="ruler"><input id="slider" type="range" min="0" max="1000" value="1000" aria-labelledby="tt-label" aria-valuetext="Live"></div>
+        <span id="asof" class="asof" aria-live="polite">Live</span>
+        <button id="live-btn" class="btn small" type="button" hidden>Back to live</button>
+      </div>
+      <div id="toasts" class="toasts" aria-live="polite"></div>
+    </section>
+
+    <aside class="inspector" id="inspector" aria-label="Inspector">
+      <div class="insp-head">
+        <div class="tabs insp-tabs" role="tablist" aria-label="Inspector">
+          <button role="tab" id="itab-details" data-tab="details" aria-controls="tab-details" aria-selected="true">Details</button>
+          <button role="tab" id="itab-recall" data-tab="recall" aria-controls="tab-recall" aria-selected="false" tabindex="-1">Recall</button>
+          <button role="tab" id="itab-activity" data-tab="activity" aria-controls="tab-activity" aria-selected="false" tabindex="-1">Activity</button>
+          <button role="tab" id="itab-bench" data-tab="bench" aria-controls="tab-bench" aria-selected="false" tabindex="-1">Benchmarks</button>
+          <span class="tab-ind" aria-hidden="true"></span>
+        </div>
+        <button id="insp-close" class="icon-btn" type="button" aria-label="Close inspector"><svg class="icon"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="panel" id="tab-details" role="tabpanel" aria-labelledby="itab-details">
+        <div id="details" class="placeholder">
+          <b class="title">Nothing selected</b>
+          Select an agent, task or memory to see its details.
+          <ol>
+            <li>Press <b>Play the demo</b> to watch three agents share one memory.</li>
+            <li>Select any fact or procedure, then <b>Why do we know this?</b> to trace where it came from.</li>
+            <li>Drag <b>Time travel</b> to see what the team believed last week.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="panel" id="tab-recall" role="tabpanel" aria-labelledby="itab-recall" hidden>
+        <form id="recall-form" class="search" role="search">
+          <svg class="icon"><use href="#i-search"/></svg>
+          <input id="recall-q" placeholder="Ask team memory…" autocomplete="off" aria-label="Ask team memory" enterkeyhint="search">
+          <kbd>/</kbd>
+        </form>
+        <p class="hint">Hybrid retrieval: vector similarity, keywords and graph hops, ranked and explained.</p>
+        <div class="suggest" id="suggest">
+          <button type="button">How do I run the tests?</button>
+          <button type="button">Who approves big refunds?</button>
+          <button type="button">Which package manager?</button>
+        </div>
+        <div id="recall-results"></div>
+      </div>
+      <div class="panel" id="tab-activity" role="tabpanel" aria-labelledby="itab-activity" hidden>
+        <div id="feed" class="feed"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      </div>
+      <div class="panel" id="tab-bench" role="tabpanel" aria-labelledby="itab-bench" hidden>
+        <div id="bench" class="placeholder">
+          <b class="title">No benchmark results yet</b>
+          Run <code>uv run python bench/concurrency.py</code> to measure concurrent agents.
+        </div>
+      </div>
+    </aside>
+  </main>
+  <div class="scrim" id="scrim" aria-hidden="true"></div>
+
+  <nav class="mobile-nav" aria-label="Sections">
+    <button type="button" data-pane="map" aria-current="true"><svg class="icon"><use href="#i-map"/></svg>Map</button>
+    <button type="button" data-pane="board"><svg class="icon"><use href="#i-board"/></svg>Board</button>
+    <button type="button" data-pane="graph"><svg class="icon"><use href="#i-graph"/></svg>Graph</button>
+    <button type="button" data-pane="team"><svg class="icon"><use href="#i-team"/></svg>Team</button>
+    <button type="button" data-pane="inspector"><svg class="icon"><use href="#i-inspect"/></svg>Inspector<span class="dot" id="insp-dot" hidden></span></button>
+  </nav>
+
+  <script src="https://unpkg.com/force-graph@1.43.5/dist/force-graph.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

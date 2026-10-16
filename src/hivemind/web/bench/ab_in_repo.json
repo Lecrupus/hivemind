@@ -1,0 +1,88 @@
+{
+  "agent": "Claude Code (headless, claude -p)",
+  "generated_at": "2026-10-16 07:04 UTC",
+  "description": "Same task on a fresh copy of demo/sample-repo, 2 run(s) per variant. 'With' starts from the memory a teammate's earlier session left.",
+  "metrics": [
+    "turns",
+    "duration_s",
+    "cost_usd",
+    "correct"
+  ],
+  "labels": {
+    "turns": "Agent turns",
+    "duration_s": "Seconds",
+    "cost_usd": "Cost (USD)",
+    "correct": "Correct runs (hidden checks)"
+  },
+  "runs": [
+    {
+      "variant": "Without Hivemind",
+      "runs": 2,
+      "turns": 5,
+      "duration_s": 40.962,
+      "cost_usd": 0.3261957,
+      "correct": 2
+    },
+    {
+      "variant": "With Hivemind",
+      "runs": 2,
+      "turns": 5.5,
+      "duration_s": 35.641000000000005,
+      "cost_usd": 0.3267155,
+      "correct": 2
+    }
+  ],
+  "raw": [
+    {
+      "variant": "without",
+      "run": 0,
+      "turns": 4,
+      "duration_s": 37.152,
+      "cost_usd": 0.4149692,
+      "is_error": false,
+      "result": "I added `apply_discount` and its tests. The whole suite passes (8 tests), but only when run as `PAYMENTS_ENV=test uv run pytest`. Plain `uv run pytest`, the command in the README, fails before any test runs.\n\n**Why plain `uv run pytest` fails:** this was already broken before my change. The shared test setup in `tests/conftest.py` opens the ledger before each test. When `PAYMENTS_ENV` isn't set, `payments/config.py` defaults to `production` and points at `https://ledger.internal`. `ledger.connect()` deliberately refuses that address, so both existing order tests errored out. Setting `PAYMENTS_",
+      "suite_passes": true,
+      "acceptance_passes": true,
+      "acceptance_output": "ACCEPTANCE OK\n"
+    },
+    {
+      "variant": "with",
+      "run": 0,
+      "turns": 6,
+      "duration_s": 36.624,
+      "cost_usd": 0.4314252,
+      "is_error": false,
+      "result": "I've added `apply_discount` and its tests, and the full suite passes: 7 tests.\n\n**`payments/discounts.py`**\n```python\ndef apply_discount(total_cents: int, percent: float) -> int:\n    if not 0 <= percent <= 100:\n        raise ValueError(...)\n    return round_cents(total_cents * (1 - percent / 100))\n```\n- **Rounding:** it follows the team's money rule (in `docs/CONVENTIONS.md` and team memory): amounts stay in integer cents and are rounded half-up with `payments.money.round_cents`, never the built-in `round()`. It works the same way as `apply_tax` in `payments/orders.py`.\n- **Range check:** I ad",
+      "suite_passes": true,
+      "acceptance_passes": true,
+      "acceptance_output": "ACCEPTANCE OK\n"
+    },
+    {
+      "variant": "without",
+      "run": 1,
+      "turns": 6,
+      "duration_s": 44.772,
+      "cost_usd": 0.23742219999999997,
+      "is_error": false,
+      "result": "I added `apply_discount`, and all 7 tests pass (2 existing, 5 new). One catch: the suite only passes when `PAYMENTS_ENV=test` is set. With a plain `uv run pytest`, every test errors out, including the old ones.\n\n**What I added**\n- `payments/discounts.py`: `apply_discount(total_cents, percent)` returns the total with `percent` taken off. It follows the money rule in `docs/CONVENTIONS.md`: amounts stay in integer cents and rounding goes through `payments.money.round_cents` (which rounds halves up) instead of the built-in `round()`. It works the same way as `apply_tax` in `orders.py`. I also made",
+      "suite_passes": true,
+      "acceptance_passes": true,
+      "acceptance_output": "ACCEPTANCE OK\n"
+    },
+    {
+      "variant": "with",
+      "run": 1,
+      "turns": 5,
+      "duration_s": 34.658,
+      "cost_usd": 0.22200579999999998,
+      "is_error": false,
+      "result": "I added `apply_discount` to `payments/discounts.py`, and the full test suite passes (7 tests, 3 of them new).\n\n```python\ndef apply_discount(total_cents: int, percent: float) -> int:\n    \"\"\"Return the total after a percentage discount, rounded half-up to whole cents.\"\"\"\n    if not 0 <= percent <= 100:\n        raise ValueError(f\"discount percent must be between 0 and 100, got {percent}\")\n    return round_cents(total_cents * (100 - percent) / 100)\n```\n\n**Conventions followed:**\n- Money stays in integer cents. Rounding goes through `payments.money.round_cents`, which rounds halves up, instead of P",
+      "suite_passes": true,
+      "acceptance_passes": true,
+      "acceptance_output": "ACCEPTANCE OK\n"
+    }
+  ],
+  "note": "Honest result: no meaningful difference at n=2. Every run was correct with or without Hivemind. Claude Opus 5.5 found both pieces of tribal knowledge directly from this small repo (the error message and docs/CONVENTIONS.md), so memory had little left to save. The time difference is within noise. Memory's value shows when knowledge is not recoverable from the code itself, which this benchmark does not yet test.",
+  "scenario": "in-repo",
+  "title": "Knowledge also in the repo"
+}

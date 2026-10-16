@@ -1,0 +1,88 @@
+{
+  "agent": "Claude Code (headless, claude -p)",
+  "scenario": "memory-only",
+  "title": "Knowledge only in team memory",
+  "generated_at": "2026-10-16 07:11 UTC",
+  "description": "Same task on a fresh copy of demo/sample-repo, 2 run(s) per variant. 'With' starts from the memory a teammate's earlier session left. The discount rules exist only in that memory; the conventions doc is removed.",
+  "metrics": [
+    "turns",
+    "duration_s",
+    "cost_usd",
+    "correct"
+  ],
+  "labels": {
+    "turns": "Agent turns",
+    "duration_s": "Seconds",
+    "cost_usd": "Cost (USD)",
+    "correct": "Correct runs (hidden checks)"
+  },
+  "runs": [
+    {
+      "variant": "Without Hivemind",
+      "runs": 2,
+      "turns": 4.5,
+      "duration_s": 34.5135,
+      "cost_usd": 0.218466,
+      "correct": 0
+    },
+    {
+      "variant": "With Hivemind",
+      "runs": 2,
+      "turns": 7,
+      "duration_s": 51.9525,
+      "cost_usd": 0.26935380000000003,
+      "correct": 2
+    }
+  ],
+  "raw": [
+    {
+      "variant": "without",
+      "run": 0,
+      "turns": 5,
+      "duration_s": 37.486,
+      "cost_usd": 0.2296996,
+      "is_error": false,
+      "result": "I added `apply_discount` to `payments/discounts.py`, with tests in `tests/test_discounts.py`. All 7 tests pass (the 2 existing ones plus 5 new), but only when run as `PAYMENTS_ENV=test uv run pytest`.\n\n**The function**\n- It follows the same pattern as `apply_tax` in `payments/orders.py`: it computes `total_cents * (1 - percent / 100)` and rounds with the team's `round_cents` helper (half-up, using Decimal).\n- If `percent` is below 0 or above 100 it raises `ValueError`. That's a choice I made, not an existing convention. Without it, a negative discount would raise the price and anything over 10",
+      "suite_passes": true,
+      "acceptance_passes": false,
+      "acceptance_output": "Traceback (most recent call last):\n  File \"<string>\", line 4, in <module>\nAssertionError: ('round down expected', 503)\n"
+    },
+    {
+      "variant": "with",
+      "run": 0,
+      "turns": 5,
+      "duration_s": 41.432,
+      "cost_usd": 0.2380932,
+      "is_error": false,
+      "result": "I added `apply_discount` to `payments/discounts.py` and tests in `tests/test_discounts.py`. The full suite passes: 7 tests, run with `PAYMENTS_ENV=test uv run --with pytest pytest -q`.\n\nThe function follows two rules from the team's shared notes. Nothing in the code itself set them, so please check they're right:\n- **It rounds down to whole cents, in the shop's favour**, instead of using the usual `round_cents` (which rounds halves up). For example, `apply_discount(1005, 10)` returns 904, not 905.\n- **Discounts are capped at 50%** (finance decision, Oct 12). Asking for 80% off 1000 returns 500",
+      "suite_passes": true,
+      "acceptance_passes": true,
+      "acceptance_output": "ACCEPTANCE OK\n"
+    },
+    {
+      "variant": "without",
+      "run": 1,
+      "turns": 4,
+      "duration_s": 31.541,
+      "cost_usd": 0.20723239999999998,
+      "is_error": false,
+      "result": "I added `apply_discount` and its tests. The full suite passes (7 tests), but only when it's run with `PAYMENTS_ENV=test`. A plain `uv run pytest`, which is the command in the README, fails on every test, including the two that were already there.\n\n**Why plain `uv run pytest` fails:** the autouse fixture in `tests/conftest.py` connects to the ledger. When `PAYMENTS_ENV` isn't set, `payments/config.py` defaults to `production` and points at `https://ledger.internal`. `payments/ledger.py` then refuses that connection with a `RuntimeError`. That's a safety guard, so I didn't loosen it. I ran the s",
+      "suite_passes": true,
+      "acceptance_passes": false,
+      "acceptance_output": "Traceback (most recent call last):\n  File \"<string>\", line 4, in <module>\nAssertionError: ('round down expected', 503)\n"
+    },
+    {
+      "variant": "with",
+      "run": 1,
+      "turns": 9,
+      "duration_s": 62.473,
+      "cost_usd": 0.30061440000000006,
+      "is_error": false,
+      "result": "I added `apply_discount` and its tests. The whole suite passes: 8 tests, run as `PAYMENTS_ENV=test uv run --with pytest pytest -q`.\n\n**What it does** (`payments/discounts.py`):\n- Returns the order total after the percentage discount, in whole cents.\n- **Discounts are capped at 50%**, so `apply_discount(1000, 80)` returns `500`. This follows a finance decision from Oct 12.\n- **Results round down** (floor), in the shop's favour. This is a deliberate exception to the half-up rounding `round_cents` uses elsewhere, and the docstring says so.\n- It uses `Decimal` arithmetic. Plain float maths gets so",
+      "suite_passes": true,
+      "acceptance_passes": true,
+      "acceptance_output": "ACCEPTANCE OK\n"
+    }
+  ],
+  "note": "Without memory, both runs used the half-up round_cents helper (the sensible guess from the code) and failed the hidden checks for the finance team's round-down and 50%-cap rules. With Hivemind, both runs applied both rules, and one told the user they came from the team's shared notes. Being right cost more: on average 7 vs 4.5 turns and $0.27 vs $0.22. n=2 per variant."
+}
