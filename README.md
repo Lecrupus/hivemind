@@ -6,7 +6,7 @@ Hivemind is a shared, time-aware memory and coordination layer for teams of AI a
 
 Built for **Graph Hacks** (WeMakeDevs × FalkorDB), **Track 2: Agent Memory and Coordination**.
 
-**[Demo video (2 min)](https://github.com/Lecrupus/hivemind/releases/tag/v0.1.0)** · [Architecture and judge Q&A](ARCHITECTURE.md) · [Deploy your own, free](#deploy)
+**[Live demo](https://hivemind-9sus.onrender.com)** · **[Demo video (2 min)](https://github.com/Lecrupus/hivemind/releases/tag/v0.1.0)** · [Architecture and judge Q&A](ARCHITECTURE.md) · [Deploy your own, free](#deploy)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Lecrupus/hivemind)
 
@@ -54,7 +54,7 @@ It also says **"not in the graph"** instead of guessing when it doesn't know som
 
 ## See it in 60 seconds
 
-Run it yourself (or [deploy it free on Render](#deploy)):
+Open the **[live demo](https://hivemind-9sus.onrender.com)** (on Render's free tier, so the first visit after a quiet spell can take about a minute to wake), or run it yourself:
 
 ```bash
 docker compose up -d
@@ -275,7 +275,7 @@ The tests cover:
 
 ## Deploy
 
-**One click, free, no database account** ([`render.yaml`](render.yaml)). Press **Deploy to Render** above and sign in with GitHub. Render builds `deploy/standalone/Dockerfile`, a single container running FalkorDB and Hivemind together (about 310 MB of RAM, within the free tier's 512 MB), and generates `HIVEMIND_API_KEY`. The demo workspace is seeded at start. Free instances sleep after 15 idle minutes, and the first visit after that takes about a minute.
+**One click, free, no database account** ([`render.yaml`](render.yaml)). This is what the [live demo](https://hivemind-9sus.onrender.com) runs. Press **Deploy to Render** above and sign in with GitHub. Render builds `deploy/standalone/Dockerfile`, a single container running FalkorDB and Hivemind together (about 310 MB of RAM, within the free tier's 512 MB), and generates `HIVEMIND_API_KEY`. The demo workspace is seeded at start. Free instances sleep after 15 idle minutes, and the first visit after that takes about a minute.
 
 The same container runs on any Docker host:
 

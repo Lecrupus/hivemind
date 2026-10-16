@@ -2,7 +2,7 @@
 PUBLISHING CHECKLIST (delete this block before posting)
 - Platform: Medium (both confirmed WeMakeDevs blog winners were on Medium); cross-post to dev.to and Hashnode with a canonical link.
 - Tags: FalkorDB, AI Agents, Claude Code, Knowledge Graph, WeMakeDevs
-- Replace every [LINK: ...] and [IMAGE: ...] placeholder. Images are in docs/img/.
+- Links are filled in. On Medium, re-upload the images from docs/img/ where the image lines are.
 - Read it aloud once and change anything that doesn't sound like you. Swap the opening scene for your own real version if you have one.
 - Share on LinkedIn and X, tagging @WeMakeDevs and @FalkorDB, and put the link in the hackathon submission.
 -->
@@ -11,7 +11,8 @@ PUBLISHING CHECKLIST (delete this block before posting)
 
 *Hivemind, built for Graph Hacks: how it works, the Cypher behind it, and the benchmark that told me where team memory actually helps.*
 
-[IMAGE: relationship-map.png. Caption: "Hivemind's live map: agents, their work, what they learned, and the topics it touches."]
+![Hivemind's live map: agents, their work, what they learned, and the topics it touches.](img/relationship-map.png)
+*Hivemind's live map: agents, their work, what they learned, and the topics it touches.*
 
 Two AI agents. Same repo. One hour apart.
 
@@ -23,7 +24,7 @@ Each of my coding agents (Claude Code in the terminal, Cursor in the editor, Cod
 
 So for **Graph Hacks** (WeMakeDevs × FalkorDB, Track 2: Agent Memory and Coordination), I built **Hivemind**: one shared, time-aware memory for a team of AI agents, stored as a graph in FalkorDB. Agents connect through MCP and Claude Code hooks. From then on, every session starts with what the team already knows, and a mistake gets made once.
 
-**Live demo:** [LINK: deployed URL] · **Code:** [LINK: GitHub repo] · **Video:** [LINK: demo video]
+**Live demo:** [hivemind-9sus.onrender.com](https://hivemind-9sus.onrender.com) · **Code:** [github.com/Lecrupus/hivemind](https://github.com/Lecrupus/hivemind) · **Video:** [2-minute demo](https://github.com/Lecrupus/hivemind/releases/tag/v0.1.0)
 
 This post walks through how it works, organised around the five things Track 2 asks agent memory to do. It shows the Cypher that does the real work, the bugs that bit me, and a benchmark whose first answer was "this doesn't help". That turned out to be the most useful thing I learned.
 
@@ -92,7 +93,8 @@ Hooks record every prompt and reply as episodes, chained in order per session, s
 
 But the feature judges and teammates actually use is **"Why do we know this?"** One traversal walks from any memory back to the session, agent and person it came from. It also finds what the memory replaced, what replaced it, and which handoffs carried it.
 
-[IMAGE: provenance.png. Caption: "Selecting a memory lights up its trail back to the agent who learned it."]
+![Selecting a memory lights up its trail back to the agent who learned it.](img/provenance.png)
+*Selecting a memory lights up its trail back to the agent who learned it.*
 
 Recall is explainable too. Each result says *why* it ranked, combining three signals:
 - **semantic:** FalkorDB's vector index
@@ -218,4 +220,4 @@ And when I measured it honestly, a strong model didn't need help with what's in 
 
 ---
 
-*Built for Graph Hacks by WeMakeDevs × FalkorDB. Hivemind is open source (MIT): [LINK: GitHub repo]. I built it with Claude Code as a pair programmer; the README has the full disclosure.*
+*Built for Graph Hacks by WeMakeDevs × FalkorDB. Hivemind is open source (MIT): [github.com/Lecrupus/hivemind](https://github.com/Lecrupus/hivemind). I built it with Claude Code as a pair programmer; the README has the full disclosure.*
